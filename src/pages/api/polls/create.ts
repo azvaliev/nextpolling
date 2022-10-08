@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
 
-// Using Formidable
 export const config = {
   api: {
     bodyParser: true,
@@ -19,6 +18,11 @@ const expectedInput = z.object({
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    res.status(405).end();
+    return;
+  }
+
   let parsedData: ReturnType<typeof expectedInput['parse']>;
   const {
     question, optionOne, optionTwo, optionThree, optionFour, duration,
