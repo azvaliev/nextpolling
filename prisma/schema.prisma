@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider = "mysql"
+  url = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model Poll {
+  id String @id @default(cuid())
+  question String
+  options Json
+  // Duration is in seconds
+  duration Int
+
+  votes Vote[]
+
+  createdAt DateTime @default(now())
+}
+
+model Vote {
+  id String @id @default(cuid())
+  ip String
+
+  pollId String
+  poll Poll @relation(fields: [pollId], references: [id])
+}
