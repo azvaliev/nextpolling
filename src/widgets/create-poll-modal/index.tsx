@@ -47,8 +47,11 @@ function CreatePollModal(): JSX.Element {
       body: JSON.stringify(reqData),
     });
 
-    const parsedPoll = await poll.json() as Poll;
-    router.push(`/polls/${parsedPoll.id}`);
+    const { id } = await poll.json() as Poll;
+    router.push(`/polls/${id}?isNew=true`).then(() => {
+      const modalInput = document.getElementById(createPollModalId) as HTMLInputElement;
+      modalInput.click();
+    });
   };
 
   return (

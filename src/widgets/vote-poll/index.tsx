@@ -14,18 +14,32 @@ function VotePoll({
   onViewResultsWithoutVoting,
   className = '',
 }: VotePollProps) {
+  const { id: pollId } = poll;
   const options = poll.options as string[];
 
   const [selectedOption, setSelectedOption] = useState<typeof options[number]>();
 
-  const handleSubmitPoll = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmitPoll = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedOption) {
       // TODO: Show error
       return;
     }
-    // TODO - Fetch API to submit
-    onVoteSubmitted(selectedOption);
+
+    try {
+      await fetch('/api/polls/vote', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          selectedOption,
+          pollId,
+        }),
+      });
+    } finally {
+      onVoteSubmitted(selectedOption);
+    }
   };
 
   return (
@@ -39,9 +53,10 @@ function VotePoll({
             <label
               htmlFor={option}
               className={`
-                   btn btn-lg btn-primary btn-outline !text-white border-primary relative
-                   ${selectedOption === option && 'btn-active'}
-                  `}
+                btn btn-lg btn-primary btn-outline !text-white border-primary relative
+                ${selectedOption === option && 'btn-active'}
+              `}
+              key={option}
             >
               <input
                 type="radio"

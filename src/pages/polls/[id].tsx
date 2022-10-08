@@ -1,15 +1,17 @@
 import { Poll, PrismaClient } from '@prisma/client';
 import { GetServerSideProps } from 'next';
 import { useState } from 'react';
+import hasIpVoted from '../../server/queries/hasIpVoted';
 import VotePoll from '../../widgets/vote-poll';
 
 type ViewPollProps = {
   poll: Poll;
   votingPeriodExpired: boolean;
+  ipVoted: boolean;
 };
 
-function ViewPoll({ poll, votingPeriodExpired }: ViewPollProps): JSX.Element {
-  const [isViewingResults, setIsViewingResults] = useState(votingPeriodExpired);
+function ViewPoll({ poll, votingPeriodExpired, ipVoted }: ViewPollProps): JSX.Element {
+  const [isViewingResults, setIsViewingResults] = useState(votingPeriodExpired && ipVoted);
   const { question } = poll;
 
   return (
@@ -19,16 +21,16 @@ function ViewPoll({ poll, votingPeriodExpired }: ViewPollProps): JSX.Element {
           {question}
         </h1>
         {
-        isViewingResults
-          ? (
-            undefined
-          ) : (
-            <VotePoll
-              poll={poll}
-              onVoteSubmitted={() => setIsViewingResults(true)}
-              onViewResultsWithoutVoting={() => setIsViewingResults(true)}
-            />
-          )
+          isViewingResults
+            ? (
+              undefined
+            ) : (
+              <VotePoll
+                poll={poll}
+                onVoteSubmitted={() => setIsViewingResults(true)}
+                onViewResultsWithoutVoting={() => setIsViewingResults(true)}
+              />
+            )
         }
       </main>
     </div>
@@ -39,10 +41,11 @@ export default ViewPoll;
 
 type UrlParams = {
   id: string;
+  isNew?: string;
 };
 
 export const getServerSideProps: GetServerSideProps<ViewPollProps, UrlParams> = async (ctx) => {
-  const { id } = ctx.query;
+  const { id, isNew } = ctx.query;
 
   if (typeof id !== 'string') {
     return {
@@ -59,14 +62,24 @@ export const getServerSideProps: GetServerSideProps<ViewPollProps, UrlParams> = 
     });
 
     let votingPeriodExpired = false;
-    if (poll.createdAt.getTime() + poll.duration > Date.now()) {
+    const pollDurationMinutesInMilliseconds = poll.duration * 60000;
+    if (poll.createdAt.getTime() + pollDurationMinutesInMilliseconds < Date.now()) {
       votingPeriodExpired = true;
+    }
+
+    const forwarded = ctx.req.headers['x-forwarded-for'];
+    const ip = typeof forwarded === 'string' ? forwarded.split(/, /)[0] : ctx.req.socket.remoteAddress;
+    let ipVoted = ip ? await hasIpVoted(prisma, ip) : false;
+
+    if (isNew) {
+      ipVoted = true;
     }
 
     return {
       props: {
         poll,
         votingPeriodExpired,
+        ipVoted,
       },
     };
   } catch {
