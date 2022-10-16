@@ -63,7 +63,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ success: bool
     ? forwarded.split(/, /)[0]
     : req.socket.remoteAddress;
 
-  const ipAlreadyVoted = ip ? await hasIpVoted(prisma, ip) : false;
+  const ipAlreadyVoted = ip ? await hasIpVoted(prisma, ip, pollId) : false;
 
   if (ipAlreadyVoted) {
     res.status(400).json({

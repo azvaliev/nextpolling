@@ -16,7 +16,7 @@ function ViewPoll({ poll, votingPeriodExpired, ipVoted }: ViewPollProps): JSX.El
 
   return (
     <div className="grid h-full w-full place-items-center">
-      <main className="flex flex-col bg-slate-600 h-[75%] w-[50%] rounded-lg px-8 py-4">
+      <main className="flex flex-col bg-slate-600 h-[75%] w-[40%] rounded-lg px-8 py-4">
         <h1 className="text-white text-4xl text-center">
           {question}
         </h1>
@@ -69,7 +69,7 @@ export const getServerSideProps: GetServerSideProps<ViewPollProps, UrlParams> = 
 
     const forwarded = ctx.req.headers['x-forwarded-for'];
     const ip = typeof forwarded === 'string' ? forwarded.split(/, /)[0] : ctx.req.socket.remoteAddress;
-    let ipVoted = ip ? await hasIpVoted(prisma, ip) : false;
+    let ipVoted = ip ? await hasIpVoted(prisma, ip, id) : false;
 
     if (isNew) {
       ipVoted = true;
