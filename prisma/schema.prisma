@@ -10,9 +10,9 @@ datasource db {
 }
 
 model Poll {
-  id       String @id @default(cuid())
+  id       String       @id @default(cuid())
   question String
-  options  Json
+  options  PollOption[]
   // Duration is in seconds
   duration Int
 
@@ -21,11 +21,24 @@ model Poll {
   createdAt DateTime @default(now())
 }
 
-model Vote {
-  id             String  @id @default(cuid())
-  ip             String?
-  selectedOption String
+model PollOption {
+  id String @id @default(cuid())
 
+  value  String
   pollId String
   poll   Poll   @relation(fields: [pollId], references: [id])
+  votes  Vote[]
+
+  @@unique([value, pollId])
+}
+
+model Vote {
+  id               String     @id @default(cuid())
+  ip               String?
+  selectedOptionId String
+  selectedOption   PollOption @relation(fields: [pollOptionId], references: [id])
+
+  pollId       String
+  poll         Poll   @relation(fields: [pollId], references: [id])
+  pollOptionId String
 }

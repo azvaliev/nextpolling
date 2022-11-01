@@ -51,14 +51,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const options = Object.entries(parsedData)
     .filter(([k]) => k.includes('option'))
-    .map(([_k, v]) => v);
+    .map(([_k, v]) => v as string);
 
   const prisma = new PrismaClient();
   const poll = await prisma.poll.create({
     data: {
       question: parsedData.question,
-      options,
       duration: parsedData.duration,
+      options: {
+        createMany: {
+          data: options.map((value) => ({
+            value,
+          })),
+        },
+      },
     },
   });
 
