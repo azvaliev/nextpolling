@@ -34,9 +34,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const pollOptions = (await prisma.pollOption.findMany({
     where: {
       pollId,
-      id: {
-        in: pollResults.map((result) => result.selectedOptionId),
-      },
     },
     select: {
       value: true,
@@ -53,6 +50,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     // eslint-disable-next-line no-underscore-dangle
     votes: pollResult._count.selectedOptionId,
   }));
+
+  Object.values(pollOptions).forEach((option) => {
+    if (!formattedPollResults.find((result) => result.option === option)) {
+      formattedPollResults.push({
+        option,
+        votes: 0,
+      });
+    }
+  });
 
   res.status(200).json(formattedPollResults);
 }
