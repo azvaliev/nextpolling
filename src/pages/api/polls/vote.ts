@@ -10,7 +10,7 @@ export const config = {
 };
 
 const expectedInput = z.object({
-  selectedOption: z.string(),
+  selectedOptionId: z.string(),
   pollId: z.string(),
 });
 
@@ -30,7 +30,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ success: bool
     return;
   }
 
-  const { data: { pollId, selectedOption } } = castVoteInputValid;
+  const { data: { pollId, selectedOptionId } } = castVoteInputValid;
   const prisma = new PrismaClient();
 
   const pollTimestampData = await prisma.poll.findUnique({
@@ -75,7 +75,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ success: bool
   await prisma.vote.create({
     data: {
       pollId,
-      selectedOption,
+      selectedOptionId,
       ip,
     },
   });

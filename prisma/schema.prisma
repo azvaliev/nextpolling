@@ -36,9 +36,8 @@ model Vote {
   id               String     @id @default(cuid())
   ip               String?
   selectedOptionId String
-  selectedOption   PollOption @relation(fields: [pollOptionId], references: [id])
+  selectedOption   PollOption @relation(fields: [selectedOptionId], references: [id])
 
   pollId       String
   poll         Poll   @relation(fields: [pollId], references: [id])
-  pollOptionId String
 }

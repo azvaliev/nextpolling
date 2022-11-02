@@ -1,9 +1,11 @@
 import { FormEvent, useState } from 'react';
-import { Poll } from '@prisma/client';
+import { Poll, PollOption } from '@prisma/client';
 
 type VotePollProps = {
   className?: string;
-  poll: Poll;
+  poll: Poll & {
+    options: PollOption[];
+  };
   onVoteSubmitted: (votedOption: string) => void;
   onViewResultsWithoutVoting: () => void;
 };
@@ -15,7 +17,7 @@ function VotePoll({
   className = '',
 }: VotePollProps) {
   const { id: pollId } = poll;
-  const options = poll.options as string[];
+  const { options } = poll;
 
   const [selectedOption, setSelectedOption] = useState<typeof options[number]>();
 
@@ -33,12 +35,12 @@ function VotePoll({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          selectedOption,
+          selectedOptionId: selectedOption.id,
           pollId,
         }),
       });
     } finally {
-      onVoteSubmitted(selectedOption);
+      onVoteSubmitted(selectedOption.id);
     }
   };
 
@@ -51,22 +53,25 @@ function VotePoll({
         <div className="grid grid-cols-2 gap-4 mb-4">
           {options.map((option) => (
             <label
-              htmlFor={option}
+              htmlFor={option.id}
               className={`
                 btn btn-lg btn-primary btn-outline !text-white border-primary relative
                 ${selectedOption === option && 'btn-active'}
               `}
-              key={option}
+              key={option.id}
             >
-              <input
-                type="radio"
-                key={option}
-                onClick={() => setSelectedOption(option)}
-                value={option}
-                id={option}
-                className="appearance-none w-full h-full opacity-[0.001] z-50 absolute hover:cursor-pointer"
-              />
-              {option}
+              {/* eslint-disable-next-line react/jsx-no-useless-fragment */}
+              <>
+                <input
+                  type="radio"
+                  key={option.id}
+                  onClick={() => setSelectedOption(option)}
+                  value={option.value}
+                  id={option.id}
+                  className="appearance-none w-full h-full opacity-[0.001] z-50 absolute hover:cursor-pointer"
+                />
+                {option}
+              </>
             </label>
           ))}
         </div>

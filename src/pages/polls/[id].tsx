@@ -1,4 +1,4 @@
-import { Poll, PrismaClient } from '@prisma/client';
+import { Poll, PollOption, PrismaClient } from '@prisma/client';
 import { GetServerSideProps } from 'next';
 import { useState } from 'react';
 import hasIpVoted from '../../server/queries/hasIpVoted';
@@ -6,7 +6,9 @@ import ViewPollResults from '../../widgets/view-poll-results';
 import VotePoll from '../../widgets/vote-poll';
 
 type ViewPollProps = {
-  poll: Poll;
+  poll: Poll & {
+    options: PollOption[];
+  };
   votingPeriodExpired: boolean;
   ipVoted: boolean;
 };
@@ -61,6 +63,9 @@ export const getServerSideProps: GetServerSideProps<ViewPollProps, UrlParams> = 
     const poll = await prisma.poll.findUniqueOrThrow({
       where: {
         id,
+      },
+      include: {
+        options: true,
       },
     });
 
