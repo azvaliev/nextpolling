@@ -70,7 +70,7 @@ function VotePoll({
                   id={option.id}
                   className="appearance-none w-full h-full opacity-[0.001] z-50 absolute hover:cursor-pointer"
                 />
-                {option}
+                {option.value}
               </>
             </label>
           ))}
