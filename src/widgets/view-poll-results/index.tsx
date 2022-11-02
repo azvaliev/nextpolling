@@ -22,11 +22,11 @@ function ViewPollResults({ pollId }: ViewPollResultsProps): JSX.Element {
 
   return (
     <div className="flex flex-row w-full h-full">
-      <div className="w-1/2 ml-0 py-16 pb-24 h-full flex flex-col">
+      <div className="w-1/2 ml-0 py-16 pb-24 h-full flex flex-col text-center">
         <h2 className="text-white text-3xl">
           Poll Results
         </h2>
-        <ul className="mt-3">
+        <ul className="mt-3 text-lg">
           {pollResults.map((result) => (
             <li>
               {result.option}
