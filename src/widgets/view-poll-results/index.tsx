@@ -21,12 +21,12 @@ function ViewPollResults({ pollId }: ViewPollResultsProps): JSX.Element {
   const pollSum = pollResults.reduce((total, result) => total + result.votes, 0);
 
   return (
-    <div className="flex flex-row w-full h-full">
-      <div className="w-1/2 ml-0 py-16 pb-24 h-full flex flex-col text-center">
-        <h2 className="text-white text-3xl">
+    <div className="flex flex-row w-full h-full xs:flex-col">
+      <div className="w-1/2 mx-auto md:py-16 pb-24 h-full flex flex-col text-center xs:py-4">
+        <h2 className="text-white text-3xl xs:hidden md:static">
           Poll Results
         </h2>
-        <ul className="mt-3 text-lg">
+        <ul className="mt-3 text-lg md:my-3">
           {pollResults.map((result) => (
             <li>
               {result.option}
@@ -49,7 +49,7 @@ function ViewPollResults({ pollId }: ViewPollResultsProps): JSX.Element {
           Share Poll (copy link)
         </button>
       </div>
-      <div className="my-auto relative ml-auto mr-0">
+      <div className="my-auto relative mx-auto">
         <PieChart width={350} height={350}>
           <Pie
             data={pollResults.map((pollResult) => ({
@@ -80,7 +80,7 @@ function ViewPollResults({ pollId }: ViewPollResultsProps): JSX.Element {
               ))
             }
           </Pie>
-          <Legend verticalAlign="top" height={36} />
+          <Legend verticalAlign="top" height={12} />
         </PieChart>
       </div>
     </div>

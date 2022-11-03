@@ -48,7 +48,7 @@ function VotePoll({
     <form className={`flex flex-col flex-1 ${className}`} onSubmit={handleSubmitPoll}>
       <div className="my-auto">
         <h2 className="text-lg mb-2">
-          Select any option and press submit to cast your vote
+          Select an option
         </h2>
         <div className="grid grid-cols-2 gap-4 mb-4">
           {options.map((option) => (
@@ -69,6 +69,7 @@ function VotePoll({
                   value={option.value}
                   id={option.id}
                   className="appearance-none w-full h-full opacity-[0.001] z-50 absolute hover:cursor-pointer"
+                  required
                 />
                 {option.value}
               </>
@@ -87,7 +88,7 @@ function VotePoll({
         className="btn btn-accent btn-block btn-lg btn-outline text-2xl hover:!text-white mt-2"
         onClick={onViewResultsWithoutVoting}
       >
-        View Results Without Voting
+        View Results w/o Voting
       </button>
     </form>
   );
