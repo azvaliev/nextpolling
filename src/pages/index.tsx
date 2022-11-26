@@ -15,19 +15,19 @@ function Home(): JSX.Element {
             Welcome to Next Polling
           </h1>
           <div>
-            <h2 className="text-3xl font-medium pb-3">
+            <h2 className="text-3xl font-medium pb-4">
               Would you like to...
             </h2>
             <div className="flex flex-row gap-4">
               {/* control is in _app, safe to disable */}
               {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
               <label
-                className="btn btn-primary modal-button"
+                className="btn btn-primary modal-button text-lg"
                 htmlFor={createPollModalId}
               >
                 Create a poll
               </label>
-              <a className="btn btn-outline" href="TODO: open search poll modal">
+              <a className="btn btn-outline text-lg" href="TODO: open search poll modal">
                 Vote in a poll
               </a>
             </div>
